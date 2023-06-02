@@ -11,7 +11,7 @@ class operations : ObservableObject{
     var s : String = ""
     
     
-    // TODO: Add functionality for decimal values and more than one operations
+    // TODO: Add functionality for more than one operations
     
     func finalScores(combinedString : String)->String{
         let finalVal : String = convertStringToVal(combinedString: combinedString)
@@ -35,30 +35,58 @@ class operations : ObservableObject{
             return "for one operation"
         }
         else{
+            var first : Int = 0
+            var second : Int = 0
             var count : Int = 0
+            var isDecimal : Bool = false
+            
             for char in combinedString{
                 if(char == "+"){
                     count+=1
-                    let first : Int = Int(combinedString.prefix(count-1)) ?? 0
-                    let second : Int = Int(combinedString.suffix(combinedString.count - count)) ?? 0
-                    return String(addition(first: first, second: second))
+                    
+                    first = Int(combinedString.prefix(count-1)) ?? 0
+                    second = Int(combinedString.suffix(combinedString.count - count)) ?? 0
+                    
+                    isDecimal = checkForDecimalVal(combinedString : combinedString, count : count)
+                    
+                    if(isDecimal){
+                        return String(addition(first: Float(combinedString.prefix(count-1)) ?? 0.0, second: Float(combinedString.suffix(combinedString.count - count)) ?? 0.0))
+                    }
+                    else{
+                        return String(addition(first: first, second: second))
+                    }
                 }
                 if(char == "-"){
                     count+=1
-                    let first : Int = Int(combinedString.prefix(count-1)) ?? 0
-                    let second : Int = Int(combinedString.suffix(combinedString.count - count)) ?? 0
-                    return String(subtraction(first: first, second: second))
+                    first = Int(combinedString.prefix(count-1)) ?? 0
+                    second = Int(combinedString.suffix(combinedString.count - count)) ?? 0
+                    
+                    isDecimal = checkForDecimalVal(combinedString : combinedString, count : count)
+                    
+                    if(isDecimal){
+                        return String(subtraction(first: Float(combinedString.prefix(count-1)) ?? 0.0, second: Float(combinedString.suffix(combinedString.count - count)) ?? 0.0))
+                    }
+                    else{
+                        return String(subtraction(first: first, second: second))
+                    }
                 }
                 if(char == "*"){
                     count+=1
-                    let first : Int = Int(combinedString.prefix(count-1)) ?? 0
-                    let second : Int = Int(combinedString.suffix(combinedString.count - count)) ?? 0
-                    return String(multiplication(first: first, second: second))
+                    first = Int(combinedString.prefix(count-1)) ?? 0
+                    second = Int(combinedString.suffix(combinedString.count - count)) ?? 0
+                    
+                    isDecimal = checkForDecimalVal(combinedString : combinedString, count : count)
+                    if(isDecimal){
+                        return String(multiplication(first: Float(combinedString.prefix(count-1)) ?? 0.0, second: Float(combinedString.suffix(combinedString.count - count)) ?? 0.0))
+                    }
+                    else{
+                        return String(multiplication(first: first, second: second))
+                    }
                 }
                 if(char == "/"){
                     count+=1
-                    let first : Int = Int(combinedString.prefix(count-1)) ?? 0
-                    let second : Int = Int(combinedString.suffix(combinedString.count - count)) ?? 0
+                    first = Int(combinedString.prefix(count-1)) ?? 0
+                    second = Int(combinedString.suffix(combinedString.count - count)) ?? 0
                     return String(division(first: first, second: second))
                 }
                 count+=1
@@ -67,15 +95,15 @@ class operations : ObservableObject{
         return "wrong output"
     }
     
-    func addition(first : Int, second : Int) -> Int{
+    func addition<type : Numeric>(first : type, second : type) -> type{
         return first+second
     }
     
-    func subtraction(first : Int, second : Int) -> Int{
+    func subtraction<type : Numeric>(first : type, second : type) -> type{
         return first-second
     }
     
-    func multiplication(first : Int, second : Int) -> Int{
+    func multiplication<type : Numeric>(first : type, second : type) -> type{
         return first*second
     }
     
@@ -83,4 +111,10 @@ class operations : ObservableObject{
         return Float(first)/Float(second)
     }
     
+    func checkForDecimalVal(combinedString : String, count : Int) -> Bool{
+        if(combinedString.prefix(count-1).contains(".") || combinedString.suffix(combinedString.count - count).contains(".")){
+            return true
+        }
+        return false
+    }
 }
